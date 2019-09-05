@@ -1,7 +1,8 @@
 package facades;
 
 import utils.EMF_Creator;
-import entities.RjdCode;
+import entities.Movie;
+import java.util.ArrayList;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -19,7 +20,15 @@ import utils.EMF_Creator.Strategy;
 public class FacadeTest {
 
     private static EntityManagerFactory emf;
-    private static FacadeRjd facade;
+    private static MovieFacade facade;
+    private String[] actor1 = {"a", "b", "c"};
+    private String[] actor2 = {"a", "b", "c"};
+    private String[] actor3 = {"a", "b", "c"};
+    private String[] actor4 = {"a", "b", "c"};
+    private Movie movie1 = new Movie(2001, "movie1", actor1);
+    private Movie movie2 = new Movie(2002, "movie2", actor2);
+    private Movie movie3 = new Movie(2003, "movie3", actor3);
+    private Movie movie4 = new Movie(2004, "movie4", actor4);
 
     public FacadeTest() {
     }
@@ -28,11 +37,11 @@ public class FacadeTest {
     public static void setUpClass() {
         emf = EMF_Creator.createEntityManagerFactory(
                 "pu",
-                "jdbc:mysql://localhost:3307/rjd_test",
+                "jdbc:mysql://localhost:3307/movie_test",
                 "dev",
                 "ax2",
                 EMF_Creator.Strategy.CREATE);
-        facade = FacadeRjd.getFacade(emf);
+        facade = MovieFacade.getMovieFacade(emf);
     }
 
     /*   **** HINT **** 
@@ -43,8 +52,8 @@ public class FacadeTest {
      */
     @BeforeAll
     public static void setUpClassV2() {
-       emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST,Strategy.DROP_AND_CREATE);
-       facade = FacadeRjd.getFacade(emf);
+        emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST, Strategy.DROP_AND_CREATE);
+        facade = MovieFacade.getMovieFacade(emf);
     }
 
     @AfterAll
@@ -54,30 +63,39 @@ public class FacadeTest {
 
     // Setup the DataBase in a known state BEFORE EACH TEST
     //TODO -- Make sure to change the script below to use YOUR OWN entity class
-    @BeforeEach
+  /*  @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("RjdCode.deleteAllRows").executeUpdate();
-            em.persist(new RjdCode("Some txt", "More text"));
-            em.persist(new RjdCode("aaa", "bbb"));
+            em.createNamedQuery("Movie.deleteAllMovies").executeUpdate();
+            em.persist(movie1);
+            em.persist(movie2);
+            em.persist(movie3);
+            em.persist(movie4);
 
             em.getTransaction().commit();
         } finally {
             em.close();
         }
     }
-
+*/
     @AfterEach
     public void tearDown() {
 //        Remove any data after each test was run
     }
-
-    // TODO: Delete or change this method 
+/*
     @Test
-    public void testAFacadeMethod() {
-        assertEquals(2, facade.getCount(), "Expects two rows in the database");
+    public void testgetAllMovies() {
+        Movie movie = new Movie();
+        ArrayList<Movie> movies = new ArrayList();
+        movies.add(movie1);
+        movies.add(movie2);
+        movies.add(movie3);
+        movies.add(movie4);
+        assertEquals(movies, facade.getAllMovies());
     }
+*/
+    
 
 }

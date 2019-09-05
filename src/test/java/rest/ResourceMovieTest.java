@@ -96,7 +96,7 @@ public class ResourceMovieTest {
         System.out.println("Testing is server UP");
         given().when().get("/movie").then().statusCode(200);
     }
-   
+  /* 
     //This test assumes the database contains two rows
     @Test
     public void testDummyMsg() throws Exception {
@@ -107,7 +107,7 @@ public class ResourceMovieTest {
         .statusCode(HttpStatus.OK_200.getStatusCode())
         .body("msg", equalTo("Hello World"));   
     }
-    
+    */
     /*@Test
     public void testCount() throws Exception {
         given()

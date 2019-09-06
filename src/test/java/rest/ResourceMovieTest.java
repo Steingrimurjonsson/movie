@@ -34,14 +34,10 @@ public class ResourceMovieTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
-    private String[] actor1 = {"a", "b", "c"};
-    private String[] actor2 = {"a", "b", "c"};
-    private String[] actor3 = {"a", "b", "c"};
-    private String[] actor4 = {"a", "b", "c"};
-    private Movie movie1 = new Movie(2001, "movie1", actor1);
-    private Movie movie2 = new Movie(2002, "movie2", actor2);
-    private Movie movie3 = new Movie(2003, "movie3", actor3);
-    private Movie movie4 = new Movie(2004, "movie4", actor4);
+    private Movie movie1;
+    private Movie movie2;
+    private Movie movie3;
+    private Movie movie4;
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -55,66 +51,68 @@ public class ResourceMovieTest {
         //NOT Required if you use the version of EMF_Creator.createEntityManagerFactory used above        
         //System.setProperty("IS_TEST", TEST_DB);
         //We are using the database on the virtual Vagrant image, so username password are the same for all dev-databases
-        
         httpServer = startServer();
-        
+
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
         RestAssured.port = SERVER_PORT;
-   
+
         RestAssured.defaultParser = Parser.JSON;
     }
-    
+
     @AfterAll
-    public static void closeTestServer(){
- 
-         httpServer.shutdownNow();
+    public static void closeTestServer() {
+
+        httpServer.shutdownNow();
     }
-    
+
     // Setup the DataBase (used by the test-server and this test) in a known state BEFORE EACH TEST
     //TODO -- Make sure to change the script below to use YOUR OWN entity class
-   /* @BeforeEach
+    @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
+        movie1 = new Movie(1932, "Nøddebo præstekjole", new String[]{"Jepser Nielsen", "Henrik Poulsen", "Freddy Fræk"});
+        movie2 = new Movie(1933, "De døde heste", new String[]{"Ulla Tørnæse", "Pia Køl", "Freddy Fræk"});
+        movie3 = new Movie(1933, "De bløde heste", new String[]{"Ulla Tørnæse", "Pia Køl", "Freddy Fræk"});
+        movie4 = new Movie(1934, "De søde heste", new String[]{"Ulla Tørnæse", "Pia Køl", "Freddy Fræk"});
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("Movie.deleteAllMovies").executeUpdate();
+            em.createNamedQuery("Movie.deleteAllRows").executeUpdate();
             em.persist(movie1);
             em.persist(movie2);
             em.persist(movie3);
             em.persist(movie4);
-            
+
             em.getTransaction().commit();
         } finally {
             em.close();
         }
-    }  
-    */
-    
+    }
+
     @Test
     public void testServerIsUp() {
         System.out.println("Testing is server UP");
         given().when().get("/movie").then().statusCode(200);
     }
-  /* 
+
     //This test assumes the database contains two rows
     @Test
     public void testDummyMsg() throws Exception {
         given()
-        .contentType("application/json")
-        .get("/movie/").then()
-        .assertThat()
-        .statusCode(HttpStatus.OK_200.getStatusCode())
-        .body("msg", equalTo("Hello World"));   
+                .contentType("application/json")
+                .get("/movie/").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("msg", equalTo("MOVIES"));
     }
-    */
-    /*@Test
+
+    @Test
     public void testCount() throws Exception {
         given()
-        .contentType("application/json")
-        .get("/movie/count").then()
-        .assertThat()
-        .statusCode(HttpStatus.OK_200.getStatusCode())
-        .body("count", equalTo(2));   
-    }*/
+                .contentType("application/json")
+                .get("/movie/count").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("count", equalTo(4));
+    }
 }

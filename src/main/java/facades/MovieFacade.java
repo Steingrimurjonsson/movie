@@ -33,10 +33,10 @@ public class MovieFacade {
     }
     
  
-    public int getMovieCount(){
+    public long getMovieCount(){
         EntityManager em = emf.createEntityManager();
         try{
-            int movieCount = (int)em.createQuery("SELECT COUNT(m) FROM Movie m").getSingleResult();
+            long movieCount = (long)em.createQuery("SELECT COUNT(m) FROM Movie m").getSingleResult();
             return movieCount;
         }finally{  
             em.close();
@@ -97,6 +97,20 @@ public class MovieFacade {
                     em.createQuery("Select actors from Movie m where m.name =:name", Movie.class);
             return query.setParameter("name", name).getResultList();
         } finally{
+            em.close();
+        }
+    }
+    public void populateMovies() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Movie.deleteAllRows").executeUpdate();
+            em.persist(new Movie(1932, "Nøddebo præstekjole", new String[]{"Jepser Nielsen", "Henrik Poulsen", "Freddy Fræk"}));
+            em.persist(new Movie(1933, "De døde heste", new String[]{"Ulla Tørnæse", "Pia Køl", "Freddy Fræk"}));
+            em.persist(new Movie(1933, "De bløde heste", new String[]{"Ulla Tørnæse", "Pia Køl", "Freddy Fræk"}));
+            em.persist(new Movie(1934, "De søde heste", new String[]{"Ulla Tørnæse", "Pia Køl", "Freddy Fræk"}));
+            em.getTransaction().commit();
+        } finally {
             em.close();
         }
     }

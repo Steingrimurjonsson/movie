@@ -2,9 +2,54 @@
 <html>
     <head>
         <title>Start Page</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
-        <h1>IT WORKED!</h1>
+        <h1>MOVIES</h1>
+   
+
+        <form>
+            <input type="text" id="txt" placeholder="USER ID">
+            <input type="submit" id="but" value="Get User">
+            <input type="submit" id="but2" value="Get All Users">
+
+        </form>
+
+        <div id="table"></div>
+
+        <script>
+            const txt = document.querySelector("#txt");
+            const table = document.querySelector("#table");
+            const but = document.querySelector("#but");
+            const but2 = document.querySelector("#but2");
+            function userToTable(user) {
+                var tableData = user.map(x => "<tr><td>" + x.id + "</td><td>" + x.name + "</td><td>" + x.year + "</td></tr>");
+                tableData.unshift("<table class=\"table\"><tr><th>ID</th><th>Name</th><th>Year</th></tr>")
+                tableData.push("</table>");
+                return tableData.join('');
+            }
+            but.onclick = function (e) {
+                e.preventDefault();
+                let url = "https://jsonplaceholder.typicode.com/users/" + txt.value;
+                fetch(url)
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log("data", data);
+                        })
+            }
+
+            but2.onclick = function (e) {
+                e.preventDefault();
+                let url = "https://ruffsacks.com/movie/all";
+                fetch(url)
+                        .then(res => res.json())
+                        .then(data => {
+                            table.innerHTML = userToTable(data);
+
+                        })
+            }
+
+        </script>
     </body>
 </html>

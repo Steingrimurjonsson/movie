@@ -3,13 +3,20 @@ package facades;
 import utils.EMF_Creator;
 import entities.Movie;
 import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasProperty;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.Settings;
 import utils.EMF_Creator.DbSelector;
@@ -21,19 +28,15 @@ public class FacadeTest {
 
     private static EntityManagerFactory emf;
     private static MovieFacade facade;
-    private String[] actor1 = {"a", "b", "c"};
-    private String[] actor2 = {"a", "b", "c"};
-    private String[] actor3 = {"a", "b", "c"};
-    private String[] actor4 = {"a", "b", "c"};
-    private Movie movie1 = new Movie(2001, "movie1", actor1);
-    private Movie movie2 = new Movie(2002, "movie2", actor2);
-    private Movie movie3 = new Movie(2003, "movie3", actor3);
-    private Movie movie4 = new Movie(2004, "movie4", actor4);
+    private Movie movie1 = new Movie(1932, "Nøddebo præstekjole", new String[]{"Jepser Nielsen", "Henrik Poulsen", "Freddy Fræk"});
+    private Movie movie2 = new Movie(1933, "De døde heste", new String[]{"Ulla Tørnæse", "Pia Køl", "Freddy Fræk"});
+    private Movie movie3 = new Movie(1933, "De bløde heste", new String[]{"Ulla Tørnæse", "Pia Køl", "Freddy Fræk"});
+    private Movie movie4 = new Movie(1934, "De søde heste", new String[]{"Ulla Tørnæse", "Pia Køl", "Freddy Fræk"});
 
     public FacadeTest() {
     }
 
-    //@BeforeAll
+    @BeforeAll
     public static void setUpClass() {
         emf = EMF_Creator.createEntityManagerFactory(
                 "pu",
@@ -43,6 +46,10 @@ public class FacadeTest {
                 EMF_Creator.Strategy.CREATE);
         facade = MovieFacade.getMovieFacade(emf);
     }
+  @AfterAll
+    public static void tearDownClass() {
+//        Clean up database after test is done or use a persistence unit with drop-and-create to start up clean on every test
+    }
 
     /*   **** HINT **** 
         A better way to handle configuration values, compared to the UNUSED example above, is to store those values
@@ -50,25 +57,17 @@ public class FacadeTest {
         The file config.properties and the corresponding helper class utils.Settings is added just to do that. 
         See below for how to use these files. This is our RECOMENDED strategy
      */
-    @BeforeAll
-    public static void setUpClassV2() {
-        emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST, Strategy.DROP_AND_CREATE);
-        facade = MovieFacade.getMovieFacade(emf);
-    }
 
-    @AfterAll
-    public static void tearDownClass() {
-//        Clean up database after test is done or use a persistence unit with drop-and-create to start up clean on every test
-    }
 
+  
     // Setup the DataBase in a known state BEFORE EACH TEST
     //TODO -- Make sure to change the script below to use YOUR OWN entity class
-  /*  @BeforeEach
+    @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("Movie.deleteAllMovies").executeUpdate();
+            em.createNamedQuery("Movie.deleteAllRows").executeUpdate();
             em.persist(movie1);
             em.persist(movie2);
             em.persist(movie3);
@@ -79,23 +78,27 @@ public class FacadeTest {
             em.close();
         }
     }
-*/
+
     @AfterEach
     public void tearDown() {
 //        Remove any data after each test was run
     }
+
+    @Test
+    public void testMovieCount() {
+        assertEquals(4, facade.getMovieCount(), "Expects 4 rows in the database");
+    }
+
+    @Test
+    public void testGetMovieByID() {
+        Movie movie = facade.getMovieByID(movie2.getId());
+        assertThat(movie.getActors()[0], containsString("Tørnæse"));
+    }
 /*
     @Test
-    public void testgetAllMovies() {
-        Movie movie = new Movie();
-        ArrayList<Movie> movies = new ArrayList();
-        movies.add(movie1);
-        movies.add(movie2);
-        movies.add(movie3);
-        movies.add(movie4);
-        assertEquals(movies, facade.getAllMovies());
+    public void testMovieHasActors() {
+        Movie movie = facade.getMovieByID(movie1.getId());
+        assertThat(movie.getActors(), arrayContaining("Jesper Nielsen"));
     }
 */
-    
-
 }
